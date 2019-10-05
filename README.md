@@ -5,7 +5,7 @@ https://github.com/Shadow035/K2J/releases/tag/v1.0.0
 
 **::Credits::**
 
-ScpVbus (for virtual Xbox devices) is/was maintained by Benjamin Höglinger.
+ScpVbus (for virtual Xbox devices) is/was maintained by Benjamin HÃ¶glinger.
 https://github.com/nefarius/ScpVBus
 
 vXboxInterface.dll is made by Shaul Eizikovich
