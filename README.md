@@ -1,7 +1,7 @@
 # K2J
 This software allow user to use single or multiple keyboards as independent virtual Xbox controller(s) using RawInput api.
 Instructions on how to use this is provided in the release.
-https://github.com/Shadow035/K2J/releases/tag/v1.0.0
+https://github.com/Shadow035/K2J/releases/
 
 **::Credits::**
 
