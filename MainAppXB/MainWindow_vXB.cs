@@ -12,7 +12,7 @@ namespace AppK2J
         #region "Used Variables"
         //Rest positions are 0
         private const short AxisMaxima = 32767;
-        private const short TriggerMaxima = 255;
+        private const byte TriggerMaxima = 255;
 
         //Number of keys to be mapped
         private const int numberofKeys = 1+174;
@@ -30,27 +30,21 @@ namespace AppK2J
         private const uint btnLT = 9;
         private const uint btnRT = 10;
 
-        private const float povU = 0.0f;
-        private const float povR = 90.0f;
-        private const float povD = 180.0f;
-        private const float povL = 270.0f;
+        private const float dpadU = 0.0f;
+        private const float dpadR = 90.0f;
+        private const float dpadD = 180.0f;
+        private const float dpadL = 270.0f;
 
-        private const uint axLX = 1;
-        private const uint axLY = 2;
-        private const uint axRT = 3;
-        private const uint axRX = 4;
-        private const uint axRY = 5;
-        private const uint axLT = 6;
+        private const uint stkLX = 1;
+        private const uint stkLY = 2;
+        private const uint stkRX = 3;
+        private const uint stkRY = 4;
 
-        //Stick status
-        private static bool isLL = false;
-        private static bool isLR = false;
-        private static bool isLU = false;
-        private static bool isLD = false;
-        private static bool isRL = false;
-        private static bool isRR = false;
-        private static bool isRU = false;
-        private static bool isRD = false;
+        //Stick status [no of axis, -ve and +ve]
+        private static bool[,] stkStatus = new bool [4,2];
+
+        private const uint trgLT = 5;
+        private const uint trgRT = 6;
 
         //Forced Shut down
         private static bool forceSD = false;
@@ -247,155 +241,59 @@ namespace AppK2J
                     BtnPress(btnRT, keyState);
                     break;
 
-                //POV
-                case "P_U":
-                    POVPress(povU, keyState);
+                //D-pad
+                case "D_U":
+                    DpadPress(dpadU, keyState);
                     break;
-                case "P_L":
-                    POVPress(povL, keyState);
+                case "D_L":
+                    DpadPress(dpadL, keyState);
                     break;
-                case "P_D":
-                    POVPress(povD, keyState);
+                case "D_D":
+                    DpadPress(dpadD, keyState);
                     break;
-                case "P_R":
-                    POVPress(povR, keyState);
+                case "D_R":
+                    DpadPress(dpadR, keyState);
                     break;
 
                 //Trigger
-                case "S_LT":
-                    AxisMove(keyState, axLT, TriggerMaxima);
+                case "T_LT":
+                    TriggerPress(keyState, trgLT);
                     break;
-                case "S_RT":
-                    AxisMove(keyState, axRT, TriggerMaxima);
+                case "T_RT":
+                    TriggerPress(keyState, trgRT);
                     break;
 
                 //Sticks
                 case "S_LU":
-                    if (keyState == "MAKE")
-                    {
-                        isLU = true;
-                        AxisMove("MAKE", axLY, AxisMaxima);
-                    }
-                    else
-                    {
-                        isLU = false;
-                        if (isLD == true)
-                            AxisMove("MAKE", axLY, -AxisMaxima);
-                        else
-                            AxisMove(keyState, axLY, 0);
-                    }
+                    StickMove(stkLY, AxisMaxima, keyState);
                     break;
 
                 case "S_LD":
-                    if (keyState == "MAKE")
-                    {
-                        isLD = true;
-                        AxisMove("MAKE", axLY, -AxisMaxima);
-                    }
-                    else
-                    {
-                        isLD = false;
-                        if (isLU == true)
-                            AxisMove("MAKE", axLY, AxisMaxima);
-                        else
-                            AxisMove(keyState, axLY, 0);
-                    }
+                    StickMove(stkLY, -AxisMaxima, keyState);
                     break;
 
                 case "S_LL":
-                    if (keyState == "MAKE")
-                    {
-                        isLL = true;
-                        AxisMove("MAKE", axLX, -AxisMaxima);
-                    }
-                    else
-                    {
-                        isLL = false;
-                        if (isLR == true)
-                            AxisMove("MAKE", axLX, AxisMaxima);
-                        else
-                            AxisMove(keyState, axLX, 0);
-                    }
+                    StickMove(stkLX, -AxisMaxima, keyState);
                     break;
 
                 case "S_LR":
-                    if (keyState == "MAKE")
-                    {
-                        isLR = true;
-                        AxisMove("MAKE", axLX, AxisMaxima);
-                    }
-                    else
-                    {
-                        isLR = false;
-                        if (isLL == true)
-                            AxisMove("MAKE", axLX, -AxisMaxima);
-                        else
-                            AxisMove(keyState, axLX, 0);
-                    }
+                    StickMove(stkLX, AxisMaxima, keyState);
                     break;
 
                 case "S_RU":
-                    if (keyState == "MAKE")
-                    {
-                        isRU = true;
-                        AxisMove("MAKE", axRY, AxisMaxima);
-                    }
-                    else
-                    {
-                        isRU = false;
-                        if (isRD == true)
-                            AxisMove("MAKE", axRY, -AxisMaxima);
-                        else
-                            AxisMove(keyState, axRY, 0);
-                    }
+                    StickMove(stkRY, AxisMaxima, keyState);
                     break;
 
                 case "S_RD":
-                    if (keyState == "MAKE")
-                    {
-                        isRD = true;
-                        AxisMove("MAKE", axRY, -AxisMaxima);
-                    }
-                    else
-                    {
-                        isRD = false;
-                        if (isRU == true)
-                            AxisMove("MAKE", axRY, AxisMaxima);
-                        else
-                            AxisMove(keyState, axRY, 0);
-                    }
+                    StickMove(stkRY, -AxisMaxima, keyState);
                     break;
 
                 case "S_RL":
-                    if (keyState == "MAKE")
-                    {
-                        isRL = true;
-                        AxisMove("MAKE", axRX, -AxisMaxima);
-                    }
-                    else
-                    {
-                        isRL = false;
-                        if (isRR == true)
-                            AxisMove("MAKE", axRX, AxisMaxima);
-                        else
-                            AxisMove(keyState, axRX, 0);
-                    }
+                    StickMove(stkRX, -AxisMaxima, keyState);
                     break;
 
                 case "S_RR":
-                    if (keyState == "MAKE")
-                    {
-                        isRR = true;
-                        AxisMove("MAKE", axRX, AxisMaxima);
-                    }
-                    else
-                    {
-                        isRR = false;
-                        if (isRL == true)
-                            AxisMove("MAKE", axRX, -AxisMaxima);
-                        else
-                            AxisMove(keyState, axRX, 0);
-                    }
+                    StickMove(stkRX, AxisMaxima, keyState);
                     break;
 
                 //Extra Mode Function
@@ -449,8 +347,11 @@ namespace AppK2J
         #region "Virtual Key to custom calls (userConfig)"
         private static string UserConfig(string _e)
         {
-            //Naming COnvension: B_* = Button, S_** = Stick Up/Down/Left/Right 
-            //P_* = POV_Hat_Switch Up/Down/Left/Right 
+            //Naming COnvension in the configuration file
+            //B_ ** = Button;  ** = A/B/X/Y/RB/LB/ST(start)/BK(back)/RT(right stick click)/LT(left stick click)
+            //S_ ** = Stick Up/Down/Left/Right; ** = LU(stands for Letf stick up and so on)/LL/LD/LR/RU/RL/RD/RR
+            //T_** = Trigger; ** = RT/LT 
+            //D_** = D-pad_Switch Up/Down/Left/Right; **=U/L/D/R
 
             if (isGameMode != 2)
             {
@@ -698,22 +599,22 @@ namespace AppK2J
         }
         #endregion
 
-        #region "Function for POV Hat Press"
-        private void POVPress(float povdir, string btnState)
+        #region "Function for D-pad Press"
+        private void DpadPress(float povdir, string btnState)
         {
             if (btnState == "MAKE")
                 switch (povdir)
                 {
-                    case povL:
+                    case dpadL:
                         SetDpadLeft(vxbID);
                         break;
-                    case povR:
+                    case dpadR:
                         SetDpadRight(vxbID);
                         break;
-                    case povU:
+                    case dpadU:
                         SetDpadUp(vxbID);
                         break;
-                    case povD:
+                    case dpadD:
                         SetDpadDown(vxbID);
                         break;
                     default:
@@ -724,32 +625,63 @@ namespace AppK2J
         }
         #endregion
 
-        #region "Function for Stick/Axis Movement"
-        private void AxisMove(string btnState, uint axis, short value)
+        #region "Function for Stick Movement"
+        private void StickMove(uint axis, short value, string btnState)
         {
             short toPress = value;
-            if (btnState != "MAKE")
-                toPress = 0;
+
+            int [] indexSet = { 0, 0 }; //set,check
+
+            if (value > 0)
+                indexSet[0] = 1;
+            if (value < 0)
+                indexSet[1] = 1;
+
+            if (btnState == "MAKE")
+                stkStatus[axis-1, indexSet[0]] = true;
+            else
+            {
+                stkStatus[axis-1, indexSet[0]] = false;
+                if (stkStatus[axis-1, indexSet[1]] == false)
+                    toPress = 0;
+                else
+                    toPress *= -1;
+            }
 
             switch (axis)
             {
-                case axLX:
+                case stkLX:
                     SetAxisX(vxbID, toPress);
                     break;
-                case axLY:
+                case stkLY:
                     SetAxisY(vxbID, toPress);
                     break;
-                case axRX:
+                case stkRX:
                     SetAxisRx(vxbID, toPress);
                     break;
-                case axRY:
+                case stkRY:
                     SetAxisRy(vxbID, toPress);
                     break;
-                case axLT:
-                    SetTriggerL(vxbID, (byte)toPress);
+                default:
                     break;
-                case axRT:
-                    SetTriggerR(vxbID, (byte)toPress);
+            }
+        }
+        #endregion
+
+        #region "Function for Trigger Movement"
+        private void TriggerPress(string btnState, uint trigger)
+        {
+            byte toPress = TriggerMaxima;
+            if (btnState != "MAKE")
+                toPress = 0;
+
+            switch (trigger)
+            {
+                case trgLT:
+                    SetTriggerL(vxbID, toPress);
+                    break;
+                case trgRT:
+                    SetTriggerR(vxbID, toPress);
                     break;
                 default:
                     break;
@@ -790,7 +722,7 @@ namespace AppK2J
         }
         #endregion
 
-        #region "Function for logging"
+        #region "Function for logging on the app window"
         //Logging to the Text Box Window
         private void LogW(string _log)
         {
