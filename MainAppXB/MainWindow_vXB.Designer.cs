@@ -29,10 +29,8 @@
         private void InitializeComponent()
         {
             this.LogBox = new System.Windows.Forms.TextBox();
-            this.ShowDef = new System.Windows.Forms.Button();
-            this.labelG = new System.Windows.Forms.Label();
-            this.labelM = new System.Windows.Forms.Label();
-            this.labelF = new System.Windows.Forms.Label();
+            this.Btn1 = new System.Windows.Forms.Button();
+            this.Btn2 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // LogBox
@@ -51,57 +49,32 @@
             this.LogBox.Size = new System.Drawing.Size(369, 183);
             this.LogBox.TabIndex = 0;
             // 
-            // ShowDef
+            // Btn1
             // 
-            this.ShowDef.Location = new System.Drawing.Point(12, 9);
-            this.ShowDef.Name = "ShowDef";
-            this.ShowDef.Size = new System.Drawing.Size(93, 23);
-            this.ShowDef.TabIndex = 1;
-            this.ShowDef.Text = "Add Keyboard";
-            this.ShowDef.UseVisualStyleBackColor = true;
-            this.ShowDef.Click += new System.EventHandler(this.ShowDef_Click);
+            this.Btn1.Location = new System.Drawing.Point(18, 9);
+            this.Btn1.Name = "Btn1";
+            this.Btn1.Size = new System.Drawing.Size(144, 23);
+            this.Btn1.TabIndex = 1;
+            this.Btn1.UseVisualStyleBackColor = true;
+            this.Btn1.Click += new System.EventHandler(this.Btn1_Click);
             // 
-            // labelG
+            // Btn2
             // 
-            this.labelG.AutoSize = true;
-            this.labelG.Location = new System.Drawing.Point(111, 14);
-            this.labelG.Name = "labelG";
-            this.labelG.Size = new System.Drawing.Size(80, 13);
-            this.labelG.TabIndex = 2;
-            this.labelG.Text = "Game Mode (+)";
-            this.labelG.Visible = false;
-            // 
-            // labelM
-            // 
-            this.labelM.AutoSize = true;
-            this.labelM.BackColor = System.Drawing.SystemColors.Control;
-            this.labelM.Location = new System.Drawing.Point(196, 14);
-            this.labelM.Name = "labelM";
-            this.labelM.Size = new System.Drawing.Size(84, 13);
-            this.labelM.TabIndex = 3;
-            this.labelM.Text = "Customization (-)";
-            this.labelM.Visible = false;
-            // 
-            // labelF
-            // 
-            this.labelF.AutoSize = true;
-            this.labelF.Location = new System.Drawing.Point(283, 14);
-            this.labelF.Name = "labelF";
-            this.labelF.Size = new System.Drawing.Size(75, 13);
-            this.labelF.TabIndex = 4;
-            this.labelF.Text = "Feed Off (end)";
-            this.labelF.Visible = false;
+            this.Btn2.Location = new System.Drawing.Point(195, 9);
+            this.Btn2.Name = "Btn2";
+            this.Btn2.Size = new System.Drawing.Size(144, 23);
+            this.Btn2.TabIndex = 5;
+            this.Btn2.UseVisualStyleBackColor = true;
+            this.Btn2.Click += new System.EventHandler(this.Btn2_Click);
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(369, 221);
-            this.Controls.Add(this.labelF);
-            this.Controls.Add(this.labelM);
-            this.Controls.Add(this.labelG);
-            this.Controls.Add(this.ShowDef);
+            this.Controls.Add(this.Btn1);
             this.Controls.Add(this.LogBox);
+            this.Controls.Add(this.Btn2);
             this.MinimumSize = new System.Drawing.Size(385, 260);
             this.Name = "MainWindow";
             this.ResumeLayout(false);
@@ -112,10 +85,8 @@
         #endregion
 
         private System.Windows.Forms.TextBox LogBox;
-        private System.Windows.Forms.Button ShowDef;
-        private System.Windows.Forms.Label labelG;
-        private System.Windows.Forms.Label labelM;
-        private System.Windows.Forms.Label labelF;
+        private System.Windows.Forms.Button Btn1;
+        private System.Windows.Forms.Button Btn2;
     }
 }
 

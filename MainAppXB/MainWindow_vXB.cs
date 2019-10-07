@@ -15,13 +15,8 @@ namespace AppK2J
         private const short TriggerMaxima = 255;
 
         //Number of keys to be mapped
-        private const int CFGsize = 27;
-        private static string[] CFGarray = new string[CFGsize];
-
-        //Data to output defence configuration
-        private static readonly string[] BTNs = { "Y", "X", "B", "A", "LB", "RB", "LT" };
-        private static readonly string[] BTNlbl = { "Rush GK", "Sliding Tackle", "Standing Tackle",
-                                                    "Contain", "Change Player", "Teammate Contain", "Jockey" };
+        private const int numberofKeys = 1+174;
+        private static string[ , ] keyConfiguration = new string[numberofKeys, 2];
 
         //Buton and axis IDs
         private const uint btnA = 1;
@@ -58,25 +53,21 @@ namespace AppK2J
         private static bool isRD = false;
 
         //Forced Shut down
-        private static bool ForceSD = false;
+        private static bool forceSD = false;
 
         //Counter variables for First Run
-        private static string FirstKeyboard = "$&%#";
+        private static string firstKeyboard = "$&%#";
         private static int nRun = 0;
 
-        // Declaring one joystick (Device id 1)
-        static public uint id = 1;
+        // Declaring one joystick (Device vxbID 1)
+        static public uint vxbID = 1;
 
         //GAME Mode
-        private static int isGameMode = 0;
+        private static int isGameMode = 2;
         private static bool isDebug = false;
+        private static bool universalController = false;
 
-        //Error logging file
-        private const string fileNameLog = "LastLog.out";
-
-        private static string DefenceConfig = "";
-
-        //LED number of virtual xBox
+        //LED number of virtual xBox //Does not work
         //private static byte Led = 0xFF;
         #endregion
 
@@ -105,39 +96,43 @@ namespace AppK2J
                 LogW("vBus found...\n");
 
             //Check for avaiable devices
-            bool findid = true;
-            for (id = 1; id <= 4; id++)
+            bool findID = true;
+            for (vxbID = 1; vxbID <= 4; vxbID++)
             {
-                findid = isControllerExists(id);
-                //LogW("Device ID : " + id + "  ( " + findid + " )\n");
-                if (findid == false)
+                findID = isControllerExists(vxbID);
+                //LogW("Device vxbID : " + vxbID + "  ( " + findID + " )\n");
+                if (findID == false)
                     break;
             }
-            if (findid == true)
-                LogNExit("No available vJoy Device found :( \n   Cannot continue\n");
+            if (findID == true)
+                LogNExit("No available vJoy Device found :( \n");
 
             // Acquire the target
-            if (PlugIn(id) != true)
+            if (PlugIn(vxbID) != true)
                 LogNExit("Failed to acquire vJoy device\n");
             else
             {
-                //GetLedNumber(id, out Led);
-                LogW("Acquired :: vXbox ID : " + id.ToString() + "\n");
+                //GetLedNumber(vxbID, out Led);
+                LogW("Acquired :: vXbox vxbID : " + vxbID.ToString() + "\n");
             }
 
-            this.Text = " :: K2J :: ID " + id.ToString() + " :: Blank";
+            this.Text = " :: K2J :: vxbID " + vxbID.ToString() + " :: Blank";
 
-            if (ForceSD == true)
+            if (forceSD == true)
             {
                 LogW("Close this application");
             }
+
+            Btn1.Text = "One-to-One Controller";
+            Btn2.Text = "Usiversal Controller";
+
             #endregion
         }
 
         private void OnKeyPressed(object sender, RawInputEventArg e)
         {
             //Forced exit on unsuccessful vXbox setup
-            if (ForceSD == true) return;
+            if (forceSD == true) return;
 
             if (e.KeyPressEvent.DeviceType == "KEYBOARD")
             {
@@ -147,8 +142,12 @@ namespace AppK2J
                     //Set the first keyboard as the input
                     if (e.KeyPressEvent.KeyPressState == "MAKE")
                     {
-                        FirstKeyboard = e.KeyPressEvent.DeviceHandle.ToString();
-                        LogW("Connected to the Keyboad : " + FirstKeyboard + "\n");
+                        if (universalController != true)
+                        {
+                            firstKeyboard = e.KeyPressEvent.DeviceHandle.ToString();
+                            LogW("Connected to the Keyboad : " + firstKeyboard + "\n");
+                        }
+
                     }
                     else
                     {
@@ -157,7 +156,7 @@ namespace AppK2J
 
                         #region "Load Configuration"
 
-                        LogW("Select the Custom Configuration file\n:: NOTE ::\nProgram does not check legitimacy of the file\n");
+                        LogW("Select a Configuration file \n");
 
                         OpenFileDialog ofd = new OpenFileDialog();
                         if (ofd.ShowDialog() == DialogResult.OK)
@@ -169,199 +168,41 @@ namespace AppK2J
 
                             try
                             {
-                                for (int i = 0; i < CFGsize; i++)
+                                for (int i = 0; i < numberofKeys; i++)
                                 {
                                     line = file.ReadLine();
                                     string[] words_ = line.Split(' ');
-                                    CFGarray[i] = words_[0];
+                                    keyConfiguration[i,0] = words_[1];
+                                    keyConfiguration[i,1] = words_[2];
                                 }
                                 LogW("Conguration Loaded successfully.\n");
-
-
                             }
-                            catch(Exception exception_)
+                            catch
                             {
-                                Debug.WriteLine(exception_.ToString());
-                                LogNExit("Corrupted Configuration file \n Cannot continue\n");
+                                LogNExit("Error in Configuration file \n");
                             }
-                            this.Text = " :: K2J :: ID " + id.ToString() + " :: "+ Path.GetFileNameWithoutExtension(ofd.FileName);
+                            this.Text = " :: K2J :: vxbID " + vxbID.ToString() + " :: "+ Path.GetFileNameWithoutExtension(ofd.FileName);
                         }
                         else
-                            LogNExit("Unusable Configuration file not found \n Cannot continue\n");
+                            LogNExit("No file selected.. \n");
 
                         #endregion
 
-                        LogW("Feeding Started...\n");
-
-                        #region "Process defence configuration to show"
-
-                        for (int def_ = 20; def_ <= 26; def_++)
-                        {
-                            for (int atk_ = 0; atk_ <= 6; atk_++)
-                            {
-                                if (CFGarray[def_] == CFGarray[atk_])
-                                    if (atk_ != def_ - 20)
-                                        DefenceConfig = DefenceConfig + BTNs[atk_] + "\t" + BTNlbl[def_ - 20] + "\n";
-                            }
-                        }
-
-                        if (DefenceConfig == "")
-                            DefenceConfig = "No Change needed\n";
-                        else
-                            DefenceConfig = "Set these settings in\nFIFA > controller configuration > Classic > Defence\n" + DefenceConfig;
-                        ShowDef.Text = "Show Defence";
-
-                        #endregion
-
-                        //Show Info onwindow
-                        labelG.Visible = true;
-                        labelM.Visible = true;
-                        labelF.Visible = true;
+                        //Changed to GameMode button
+                        Btn1.Text = "Mode 1 <" + keyConfiguration[0, 0] + ">";
+                        Btn2.Text = "Mode 2 <" + keyConfiguration[0, 1] + ">";
 
                         //set nRun = 2 and send to next step
                         nRun = 2;
                     }
 
                 }
-                else if (e.KeyPressEvent.DeviceHandle.ToString() == FirstKeyboard)
+                else if ((e.KeyPressEvent.DeviceHandle.ToString() == firstKeyboard)||(universalController==true))
                 {
                     ExecuteCalls(e.KeyPressEvent.VKeyName, e.KeyPressEvent.KeyPressState);
                 }
             }
         }
-
-        #region "Virtual Key to custom calls (userConfig)"
-        private static string UserConfig(string _e)
-        {
-            //return GAMEmode
-            switch (_e)
-            {
-                case "END":
-                    return "NOFEED";
-                case "ADD":
-                    return "GAMEON";
-                case "SUBTRACT":
-                    return "MENUON";
-                default:
-                    break;
-            }
-            #region "Mode 1: Fifa Mode"
-            if (isGameMode == 1)
-            {
-                //Naming COnvension: B_* = Button, S_** = Stick Up/Down/Left/Right 
-                //P_* = POV_Hat_Switch Up/Down/Left/Right 
-
-                //Important::
-                // Do not change this order
-                if (_e == CFGarray[0]) return "B_Y";
-                else if (_e == CFGarray[1]) return "B_X";
-                else if (_e == CFGarray[2]) return "B_B";
-                else if (_e == CFGarray[3]) return "B_A";
-                else if (_e == CFGarray[4]) return "B_LB";
-                else if (_e == CFGarray[5]) return "B_RB";
-                else if (_e == CFGarray[6]) return "S_LT";
-                else if (_e == CFGarray[7]) return "S_RT";
-                else if (_e == CFGarray[8]) return "S_LU";
-                else if (_e == CFGarray[9]) return "S_LD";
-                else if (_e == CFGarray[10]) return "S_LL";
-                else if (_e == CFGarray[11]) return "S_LR";
-                else if (_e == CFGarray[12]) return "P_U";
-                else if (_e == CFGarray[13]) return "P_L";
-                else if (_e == CFGarray[14]) return "P_D";
-                else if (_e == CFGarray[15]) return "P_R";
-                else if (_e == CFGarray[16]) return "S_RU";
-                else if (_e == CFGarray[17]) return "S_RL";
-                else if (_e == CFGarray[18]) return "S_RD";
-                else if (_e == CFGarray[19]) return "S_RR";
-                else if (_e == CFGarray[20]) return "B_Y";
-                else if (_e == CFGarray[21]) return "B_X";
-                else if (_e == CFGarray[22]) return "B_B";
-                else if (_e == CFGarray[23]) return "B_A";
-                else if (_e == CFGarray[24]) return "B_LB";
-                else if (_e == CFGarray[25]) return "B_RB";
-                else if (_e == CFGarray[26]) return "S_LT";
-                else if (_e == "ENTER") return "B_A";
-                else if (_e == "ESCAPE") return "B_ST";
-                else return _e;
-            }
-            #endregion
-
-            #region "Mode 2: Menu Mode for FIFA"
-            else if (isGameMode == 2)
-            {
-                switch (_e)
-                {
-                    //Team customization menu
-                    case "UP":
-                        return "S_LU";
-                    case "DOWN":
-                        return "S_LD";
-                    case "LEFT":
-                        return "S_LL";
-                    case "RIGHT":
-                        return "S_LR";
-                    case "ENTER":
-                        return "B_A";
-                    case "Q":
-                        return "B_RT";
-                    case "F":
-                        return "B_BK";
-                    case "E":
-                        return "S_RT";
-                    case "W":
-                        return "S_LT";
-                    case "S":
-                        return "B_X";
-                    case "D":
-                        return "B_Y";
-                    case "X":
-                        return "B_LB";
-                    case "C":
-                        return "B_RB";
-                    case "NUMPAD8":
-                        return "S_RU";
-                    case "NUMPAD4":
-                        return "S_RL";
-                    case "NUMPAD2":
-                        return "S_RD";
-                    case "NUMPAD6":
-                        return "S_RR";
-                    case "ESCAPE":
-                        return "B_B";
-
-                    //Special case for team select menu to navigate
-                    // Space = Enter    &    Backspace = Esc
-                    // Arrow keys = IJKL
-                    case "I":
-                        return "S_LU";
-                    case "K":
-                        return "S_LD";
-                    case "J":
-                        return "S_LL";
-                    case "L":
-                        return "S_LR";
-                    case "SPACE":
-                        return "B_A";
-                    case "BACK":
-                        return "B_B";
-
-                    default:
-                        return _e;
-                }
-            }
-            #endregion
-
-            #region "Idle Mode: Delete = Debug"
-            else
-            {
-                if (_e == "DELETE")
-                    return "DEBUG";
-                else
-                    return _e;
-            }
-            #endregion
-        }
-        #endregion
 
         #region "Customs calls execution"
         private void ExecuteCalls (string vKey,string keyState)
@@ -370,7 +211,7 @@ namespace AppK2J
             string command = UserConfig(vKey);
 
             if (isDebug == true)
-                LogW("\t" + vKey + ((keyState == "MAKE") ? " (D)" : " (U)") + "\t" + command + "\n");
+                LogW(vKey + ((keyState == "MAKE") ? " (D)" : " (U)") + "\t" + command + "\n");
 
             switch (command)
             {
@@ -558,42 +399,258 @@ namespace AppK2J
                     break;
 
                 //Extra Mode Function
-                case "NOFEED":
-                    if (keyState == "MAKE")
-                        LogW("FEED  Off\n");
-                    else
-                        isGameMode = 0;
-                    break;
-
                 case "DEBUG":
                     if (keyState != "MAKE")
-                    {
-                        LogW("Debugging ");
                         isDebug = !isDebug;
-                        if (isDebug == true) LogW("ON\n");
-                        else LogW("OFF\n");
+                    break;
+
+                case "MODE1":
+                    if (keyState != "MAKE")
+                    {
+                        if ((isGameMode == 1) || (isGameMode == 2))
+                        {
+                            isGameMode = 0;
+                            Btn1.BackColor = System.Drawing.Color.Lime;
+                            Btn2.BackColor = Control.DefaultBackColor;
+                        }
+                        else
+                        {
+                            isGameMode = 2;
+                            Btn1.BackColor = Control.DefaultBackColor;
+                            Btn2.BackColor = Control.DefaultBackColor;
+                        }
                     }
                     break;
 
-                case "GAMEON":
-                    if (keyState == "MAKE")
-                        LogW("GAMEMODE   :)\n");
-                    else
-                        isGameMode = 1;
-                    break;
-
-                case "MENUON":
-                    if (keyState == "MAKE")
-                        LogW("Customization menu mode\n");
-                    else
-                        isGameMode = 2;
+                case "MODE2":
+                    if (keyState != "MAKE")
+                    {
+                        if ((isGameMode == 0) || (isGameMode == 2))
+                        {
+                            isGameMode = 1;
+                            Btn1.BackColor = Control.DefaultBackColor;
+                            Btn2.BackColor = System.Drawing.Color.Lime;
+                        }
+                        else
+                        {
+                            isGameMode = 2;
+                            Btn1.BackColor = Control.DefaultBackColor;
+                            Btn2.BackColor = Control.DefaultBackColor;
+                        }
+                    }
                     break;
 
                 default:
                     break;
             }
         }
-         #endregion
+        #endregion
+
+        #region "Virtual Key to custom calls (userConfig)"
+        private static string UserConfig(string _e)
+        {
+            //Naming COnvension: B_* = Button, S_** = Stick Up/Down/Left/Right 
+            //P_* = POV_Hat_Switch Up/Down/Left/Right 
+
+            if (isGameMode != 2)
+            {
+                switch (_e)
+                {
+                    case "A": return keyConfiguration[1, isGameMode];
+                    case "ADD": return keyConfiguration[2, isGameMode];
+                    case "ALT": return keyConfiguration[3, isGameMode];
+                    case "APPS": return keyConfiguration[4, isGameMode];
+                    case "ATTN": return keyConfiguration[5, isGameMode];
+                    case "B": return keyConfiguration[6, isGameMode];
+                    case "BACK": return keyConfiguration[7, isGameMode];
+                    case "BROWSERBACK": return keyConfiguration[8, isGameMode];
+                    case "BROWSERFAVORITES": return keyConfiguration[9, isGameMode];
+                    case "BROWSERFORWARD": return keyConfiguration[10, isGameMode];
+                    case "BROWSERHOME": return keyConfiguration[11, isGameMode];
+                    case "BROWSERREFRESH": return keyConfiguration[12, isGameMode];
+                    case "BROWSERSEARCH": return keyConfiguration[13, isGameMode];
+                    case "BROWSERSTOP": return keyConfiguration[14, isGameMode];
+                    case "C": return keyConfiguration[15, isGameMode];
+                    case "CANCEL": return keyConfiguration[16, isGameMode];
+                    case "CAPITAL": return keyConfiguration[17, isGameMode];
+                    case "CLEAR": return keyConfiguration[18, isGameMode];
+                    case "CONTROL": return keyConfiguration[19, isGameMode];
+                    case "CONTROLKEY": return keyConfiguration[20, isGameMode];
+                    case "CRSEL": return keyConfiguration[21, isGameMode];
+                    case "D": return keyConfiguration[22, isGameMode];
+                    case "D0": return keyConfiguration[23, isGameMode];
+                    case "D1": return keyConfiguration[24, isGameMode];
+                    case "D2": return keyConfiguration[25, isGameMode];
+                    case "D3": return keyConfiguration[26, isGameMode];
+                    case "D4": return keyConfiguration[27, isGameMode];
+                    case "D5": return keyConfiguration[28, isGameMode];
+                    case "D6": return keyConfiguration[29, isGameMode];
+                    case "D7": return keyConfiguration[30, isGameMode];
+                    case "D8": return keyConfiguration[31, isGameMode];
+                    case "D9": return keyConfiguration[32, isGameMode];
+                    case "DECIMAL": return keyConfiguration[33, isGameMode];
+                    case "DELETE": return keyConfiguration[34, isGameMode];
+                    case "DIVIDE": return keyConfiguration[35, isGameMode];
+                    case "DOWN": return keyConfiguration[36, isGameMode];
+                    case "E": return keyConfiguration[37, isGameMode];
+                    case "END": return keyConfiguration[38, isGameMode];
+                    case "ENTER": return keyConfiguration[39, isGameMode];
+                    case "ERASEEOF": return keyConfiguration[40, isGameMode];
+                    case "ESCAPE": return keyConfiguration[41, isGameMode];
+                    case "EXECUTE": return keyConfiguration[42, isGameMode];
+                    case "EXSEL": return keyConfiguration[43, isGameMode];
+                    case "F": return keyConfiguration[44, isGameMode];
+                    case "F1": return keyConfiguration[45, isGameMode];
+                    case "F10": return keyConfiguration[46, isGameMode];
+                    case "F11": return keyConfiguration[47, isGameMode];
+                    case "F12": return keyConfiguration[48, isGameMode];
+                    case "F13": return keyConfiguration[49, isGameMode];
+                    case "F14": return keyConfiguration[50, isGameMode];
+                    case "F15": return keyConfiguration[51, isGameMode];
+                    case "F16": return keyConfiguration[52, isGameMode];
+                    case "F17": return keyConfiguration[53, isGameMode];
+                    case "F18": return keyConfiguration[54, isGameMode];
+                    case "F19": return keyConfiguration[55, isGameMode];
+                    case "F2": return keyConfiguration[56, isGameMode];
+                    case "F20": return keyConfiguration[57, isGameMode];
+                    case "F21": return keyConfiguration[58, isGameMode];
+                    case "F22": return keyConfiguration[59, isGameMode];
+                    case "F23": return keyConfiguration[60, isGameMode];
+                    case "F24": return keyConfiguration[61, isGameMode];
+                    case "F3": return keyConfiguration[62, isGameMode];
+                    case "F4": return keyConfiguration[63, isGameMode];
+                    case "F5": return keyConfiguration[64, isGameMode];
+                    case "F6": return keyConfiguration[65, isGameMode];
+                    case "F7": return keyConfiguration[66, isGameMode];
+                    case "F8": return keyConfiguration[67, isGameMode];
+                    case "F9": return keyConfiguration[68, isGameMode];
+                    case "FINALMODE": return keyConfiguration[69, isGameMode];
+                    case "G": return keyConfiguration[70, isGameMode];
+                    case "H": return keyConfiguration[71, isGameMode];
+                    case "HANGUELMODE": return keyConfiguration[72, isGameMode];
+                    case "HANJAMODE": return keyConfiguration[73, isGameMode];
+                    case "HELP": return keyConfiguration[74, isGameMode];
+                    case "HOME": return keyConfiguration[75, isGameMode];
+                    case "I": return keyConfiguration[76, isGameMode];
+                    case "IMEACEEPT": return keyConfiguration[77, isGameMode];
+                    case "IMECONVERT": return keyConfiguration[78, isGameMode];
+                    case "IMEMODECHANGE": return keyConfiguration[79, isGameMode];
+                    case "IMENONCONVERT": return keyConfiguration[80, isGameMode];
+                    case "INSERT": return keyConfiguration[81, isGameMode];
+                    case "J": return keyConfiguration[82, isGameMode];
+                    case "JUNJAMODE": return keyConfiguration[83, isGameMode];
+                    case "K": return keyConfiguration[84, isGameMode];
+                    case "KEYCODE": return keyConfiguration[85, isGameMode];
+                    case "L": return keyConfiguration[86, isGameMode];
+                    case "LAUNCHAPPLICATION1": return keyConfiguration[87, isGameMode];
+                    case "LAUNCHAPPLICATION2": return keyConfiguration[88, isGameMode];
+                    case "LAUNCHMAIL": return keyConfiguration[89, isGameMode];
+                    case "LBUTTON": return keyConfiguration[90, isGameMode];
+                    case "LCONTROL": return keyConfiguration[91, isGameMode];
+                    case "LEFT": return keyConfiguration[92, isGameMode];
+                    case "LINEFEED": return keyConfiguration[93, isGameMode];
+                    case "LMENU": return keyConfiguration[94, isGameMode];
+                    case "LSHIFT": return keyConfiguration[95, isGameMode];
+                    case "LWIN": return keyConfiguration[96, isGameMode];
+                    case "M": return keyConfiguration[97, isGameMode];
+                    case "MBUTTON": return keyConfiguration[98, isGameMode];
+                    case "MEDIANEXTTRACK": return keyConfiguration[99, isGameMode];
+                    case "MEDIAPLAYPAUSE": return keyConfiguration[100, isGameMode];
+                    case "MEDIAPREVIOUSTRACK": return keyConfiguration[101, isGameMode];
+                    case "MEDIASTOP": return keyConfiguration[102, isGameMode];
+                    case "MENU": return keyConfiguration[103, isGameMode];
+                    case "MULTIPLY": return keyConfiguration[104, isGameMode];
+                    case "N": return keyConfiguration[105, isGameMode];
+                    case "NEXT": return keyConfiguration[106, isGameMode];
+                    case "NONAME": return keyConfiguration[107, isGameMode];
+                    case "NONE": return keyConfiguration[108, isGameMode];
+                    case "NUMLOCK": return keyConfiguration[109, isGameMode];
+                    case "NUMPAD0": return keyConfiguration[110, isGameMode];
+                    case "NUMPAD1": return keyConfiguration[111, isGameMode];
+                    case "NUMPAD2": return keyConfiguration[112, isGameMode];
+                    case "NUMPAD3": return keyConfiguration[113, isGameMode];
+                    case "NUMPAD4": return keyConfiguration[114, isGameMode];
+                    case "NUMPAD5": return keyConfiguration[115, isGameMode];
+                    case "NUMPAD6": return keyConfiguration[116, isGameMode];
+                    case "NUMPAD7": return keyConfiguration[117, isGameMode];
+                    case "NUMPAD8": return keyConfiguration[118, isGameMode];
+                    case "NUMPAD9": return keyConfiguration[119, isGameMode];
+                    case "O": return keyConfiguration[120, isGameMode];
+                    case "OEM8": return keyConfiguration[121, isGameMode];
+                    case "OEMBACKSLASH": return keyConfiguration[122, isGameMode];
+                    case "OEMCLEAR": return keyConfiguration[123, isGameMode];
+                    case "OEMCLOSEBRACKETS": return keyConfiguration[124, isGameMode];
+                    case "OEMCOMMA": return keyConfiguration[125, isGameMode];
+                    case "OEMMINUS": return keyConfiguration[126, isGameMode];
+                    case "OEMOPENBRACKETS": return keyConfiguration[127, isGameMode];
+                    case "OEMPERIOD": return keyConfiguration[128, isGameMode];
+                    case "OEMPIPE": return keyConfiguration[129, isGameMode];
+                    case "OEMPLUS": return keyConfiguration[130, isGameMode];
+                    case "OEMQUESTION": return keyConfiguration[131, isGameMode];
+                    case "OEMQUOTES": return keyConfiguration[132, isGameMode];
+                    case "OEMSEMICOLON": return keyConfiguration[133, isGameMode];
+                    case "OEMTILDE": return keyConfiguration[134, isGameMode];
+                    case "P": return keyConfiguration[135, isGameMode];
+                    case "PA1": return keyConfiguration[136, isGameMode];
+                    case "PAUSE": return keyConfiguration[137, isGameMode];
+                    case "PLAY": return keyConfiguration[138, isGameMode];
+                    case "PRINT": return keyConfiguration[139, isGameMode];
+                    case "PRINTSCREEN": return keyConfiguration[140, isGameMode];
+                    case "PRIOR": return keyConfiguration[141, isGameMode];
+                    case "PROCESSKEY": return keyConfiguration[142, isGameMode];
+                    case "Q": return keyConfiguration[143, isGameMode];
+                    case "R": return keyConfiguration[144, isGameMode];
+                    case "RBUTTON": return keyConfiguration[145, isGameMode];
+                    case "RCONTROL": return keyConfiguration[146, isGameMode];
+                    case "RIGHT": return keyConfiguration[147, isGameMode];
+                    case "RMENU": return keyConfiguration[148, isGameMode];
+                    case "RSHIFT": return keyConfiguration[149, isGameMode];
+                    case "RWIN": return keyConfiguration[150, isGameMode];
+                    case "S": return keyConfiguration[151, isGameMode];
+                    case "SCROLL": return keyConfiguration[152, isGameMode];
+                    case "SELECT": return keyConfiguration[153, isGameMode];
+                    case "SELECTMEDIA": return keyConfiguration[154, isGameMode];
+                    case "SEPARATOR": return keyConfiguration[155, isGameMode];
+                    case "SHIFT": return keyConfiguration[156, isGameMode];
+                    case "SHIFTKEY": return keyConfiguration[157, isGameMode];
+                    case "SPACE": return keyConfiguration[158, isGameMode];
+                    case "SUBTRACT": return keyConfiguration[159, isGameMode];
+                    case "T": return keyConfiguration[160, isGameMode];
+                    case "TAB": return keyConfiguration[161, isGameMode];
+                    case "U": return keyConfiguration[162, isGameMode];
+                    case "UP": return keyConfiguration[163, isGameMode];
+                    case "V": return keyConfiguration[164, isGameMode];
+                    case "VOLUMEDOWN": return keyConfiguration[165, isGameMode];
+                    case "VOLUMEMUTE": return keyConfiguration[166, isGameMode];
+                    case "VOLUMEUP": return keyConfiguration[167, isGameMode];
+                    case "W": return keyConfiguration[168, isGameMode];
+                    case "X": return keyConfiguration[169, isGameMode];
+                    case "XBUTTON1": return keyConfiguration[170, isGameMode];
+                    case "XBUTTON2": return keyConfiguration[171, isGameMode];
+                    case "Y": return keyConfiguration[172, isGameMode];
+                    case "Z": return keyConfiguration[173, isGameMode];
+                    case "ZOOM": return keyConfiguration[174, isGameMode];
+                    default: return "--";
+                }
+            }
+            //Idle mode
+            else
+            {
+                if (_e == keyConfiguration[0, 0])
+                {
+                    return "MODE1";
+                }
+                else if (_e == keyConfiguration[0, 1])
+                {
+                    return "MODE2";
+                }
+                else if (_e == "DELETE")
+                    return "DEBUG";
+                else
+                    return "--";
+            }
+        }
+        #endregion
 
         #region "Function for Button Press" 
         private void BtnPress(uint btnID, string btnState)
@@ -605,34 +662,34 @@ namespace AppK2J
             switch (btnID)
             {
                 case btnA:
-                    SetBtnA(id, isPressed);
+                    SetBtnA(vxbID, isPressed);
                     break;
                 case btnB:
-                    SetBtnB(id, isPressed);
+                    SetBtnB(vxbID, isPressed);
                     break;
                 case btnX:
-                    SetBtnX(id, isPressed);
+                    SetBtnX(vxbID, isPressed);
                     break;
                 case btnY:
-                    SetBtnY(id, isPressed);
+                    SetBtnY(vxbID, isPressed);
                     break;
                 case btnLB:
-                    SetBtnLB(id, isPressed);
+                    SetBtnLB(vxbID, isPressed);
                     break;
                 case btnRB:
-                    SetBtnRB(id, isPressed);
+                    SetBtnRB(vxbID, isPressed);
                     break;
                 case btnLT:
-                    SetBtnLT(id, isPressed);
+                    SetBtnLT(vxbID, isPressed);
                     break;
                 case btnRT:
-                    SetBtnRT(id, isPressed);
+                    SetBtnRT(vxbID, isPressed);
                     break;
                 case btnST:
-                    SetBtnStart(id, isPressed);
+                    SetBtnStart(vxbID, isPressed);
                     break;
                 case btnBK:
-                    SetBtnBack(id, isPressed);
+                    SetBtnBack(vxbID, isPressed);
                     break;
                 default:
                     break;
@@ -648,22 +705,22 @@ namespace AppK2J
                 switch (povdir)
                 {
                     case povL:
-                        SetDpadLeft(id);
+                        SetDpadLeft(vxbID);
                         break;
                     case povR:
-                        SetDpadRight(id);
+                        SetDpadRight(vxbID);
                         break;
                     case povU:
-                        SetDpadUp(id);
+                        SetDpadUp(vxbID);
                         break;
                     case povD:
-                        SetDpadDown(id);
+                        SetDpadDown(vxbID);
                         break;
                     default:
                         break;
                 }
             else
-                SetDpadOff(id);
+                SetDpadOff(vxbID);
         }
         #endregion
 
@@ -677,22 +734,22 @@ namespace AppK2J
             switch (axis)
             {
                 case axLX:
-                    SetAxisX(id, toPress);
+                    SetAxisX(vxbID, toPress);
                     break;
                 case axLY:
-                    SetAxisY(id, toPress);
+                    SetAxisY(vxbID, toPress);
                     break;
                 case axRX:
-                    SetAxisRx(id, toPress);
+                    SetAxisRx(vxbID, toPress);
                     break;
                 case axRY:
-                    SetAxisRy(id, toPress);
+                    SetAxisRy(vxbID, toPress);
                     break;
                 case axLT:
-                    SetTriggerL(id, (byte)toPress);
+                    SetTriggerL(vxbID, (byte)toPress);
                     break;
                 case axRT:
-                    SetTriggerR(id, (byte)toPress);
+                    SetTriggerR(vxbID, (byte)toPress);
                     break;
                 default:
                     break;
@@ -701,16 +758,35 @@ namespace AppK2J
         #endregion
 
         #region "Function for Window Form button click"
-        private void ShowDef_Click(object sender, EventArgs e)
+        private void Btn1_Click(object sender, EventArgs e)
         {
             //Set Keyboard at first run
             if (nRun == 0)
             {
-                LogW("Press any key on the desired keyboard...\n");
-                nRun++;
+                LogW("Press any key of the desired keyboard...\n");
+                nRun = 1;
             }
-            else
-                LogW(DefenceConfig);
+            //Changed to GameMode button
+            else if (nRun > 1)
+            {
+                ExecuteCalls(keyConfiguration[0,0],"BREAK");
+            }
+        }
+
+        private void Btn2_Click(object sender, EventArgs e)
+        {
+            //Set Keyboard at first run
+            if (nRun == 0)
+            {
+                LogW("Press any key of any keyboard...\n");
+                universalController = true;
+                nRun = 1;
+            }
+            //Changed to GameMode button
+            else if (nRun > 1)
+            {
+                ExecuteCalls(keyConfiguration[0, 1], "BREAK");
+            }
         }
         #endregion
 
@@ -723,19 +799,19 @@ namespace AppK2J
         }
 
         //Log Closing Reason to LastLog and exit
-        private static void LogNExit(string _err)
+        private void LogNExit(string _err)
         {
-            ForceSD = true;
+            forceSD = true;
             //logging error msge
-            using (StreamWriter sw = File.AppendText(fileNameLog))
-                sw.WriteLine(DateTime.Now.ToString("HH:mm:ss") + "\n" + _err);
+            string _x = _err.Replace("\n", Environment.NewLine);
+            MessageBox.Show(_x, "Error :: Application shutting down...");
             Application.Exit();
         }
         #endregion
 
         private void Keyboard_FormClosing(object sender, FormClosingEventArgs e)
         {
-            UnPlug(id);
+            UnPlug(vxbID);
             _rawinput.KeyPressed -= OnKeyPressed;
         }
 
@@ -839,41 +915,7 @@ namespace AppK2J
         private static extern bool SetDpadOff(uint UserIndex);
 
         #endregion
+
     }
 }
 
-#region "Template for Configuration"
-//Template of Fifa User's Custom Configuration file and currently set to classic 
-//THis order directly matches to the the FFIA mode (game mode = 1) of UserConfig function
-#if false
-
-K         //Through Ball (Y)
-J         //Lob Pass (X)
-SPACE     //Shoot (B)
-L         //Short Pass (A)
-LCONTROL  //Player Run/Modifier (LB)
-I         //Finesse Shot (RB)
-CAPITAL   //Pace Control(LT)
-LSHIFT    //Sprint	(RT)
-W         //Left Stick UP (LU)
-S         //Left Stick Down (LD)
-A         //Left Stick Left (LL)
-D         //Left Stick Right (LR)
-UP        //Tactics UP (PovU)
-LEFT      //Mentality Left (PovL)
-DOWN      //Tactics Down (PovD)
-RIGHT     //Mentality Right (PovR)
-NUMPAD8   //Right Stick UP	(RU)
-NUMPAD4   //Right Stick Left (RL)
-NUMPAD2   //Right Stick Down (RD)
-NUMPAD6   //Right Stick Right (RR)
-K         //Rush GK (Y)
-J         //Sliding Tackle (X)
-SPACE     //Standing Tackle (B)
-L         //Contain (A)
-LCONTROL  //Change Player (LB)
-I         //Teammate Contain (RB)
-CAPITAL   //Jockey (LT)
-
-#endif
-#endregion
