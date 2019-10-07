@@ -497,15 +497,15 @@ namespace AppK2J
                     if (keyState == "MAKE")
                     {
                         isRU = true;
-                        AxisMove("MAKE", axLY, AxisMaxima);
+                        AxisMove("MAKE", axRY, AxisMaxima);
                     }
                     else
                     {
                         isRU = false;
                         if (isRD == true)
-                            AxisMove("MAKE", axLY, -AxisMaxima);
+                            AxisMove("MAKE", axRY, -AxisMaxima);
                         else
-                            AxisMove(keyState, axLY, 0);
+                            AxisMove(keyState, axRY, 0);
                     }
                     break;
 
@@ -513,15 +513,15 @@ namespace AppK2J
                     if (keyState == "MAKE")
                     {
                         isRD = true;
-                        AxisMove("MAKE", axLY, -AxisMaxima);
+                        AxisMove("MAKE", axRY, -AxisMaxima);
                     }
                     else
                     {
                         isRD = false;
                         if (isRU == true)
-                            AxisMove("MAKE", axLY, AxisMaxima);
+                            AxisMove("MAKE", axRY, AxisMaxima);
                         else
-                            AxisMove(keyState, axLY, 0);
+                            AxisMove(keyState, axRY, 0);
                     }
                     break;
 
@@ -529,15 +529,15 @@ namespace AppK2J
                     if (keyState == "MAKE")
                     {
                         isRL = true;
-                        AxisMove("MAKE", axLX, -AxisMaxima);
+                        AxisMove("MAKE", axRX, -AxisMaxima);
                     }
                     else
                     {
                         isRL = false;
                         if (isRR == true)
-                            AxisMove("MAKE", axLX, AxisMaxima);
+                            AxisMove("MAKE", axRX, AxisMaxima);
                         else
-                            AxisMove(keyState, axLX, 0);
+                            AxisMove(keyState, axRX, 0);
                     }
                     break;
 
@@ -545,15 +545,15 @@ namespace AppK2J
                     if (keyState == "MAKE")
                     {
                         isRR = true;
-                        AxisMove("MAKE", axLX, AxisMaxima);
+                        AxisMove("MAKE", axRX, AxisMaxima);
                     }
                     else
                     {
                         isRR = false;
                         if (isRL == true)
-                            AxisMove("MAKE", axLX, -AxisMaxima);
+                            AxisMove("MAKE", axRX, -AxisMaxima);
                         else
-                            AxisMove(keyState, axLX, 0);
+                            AxisMove(keyState, axRX, 0);
                     }
                     break;
 
