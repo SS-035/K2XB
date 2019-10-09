@@ -234,10 +234,10 @@ namespace AppK2J
                 case "B_BK":
                     BtnPress(btnBK, keyState);
                     break;
-                case "B_LT":
+                case "B_LC":
                     BtnPress(btnLT, keyState);
                     break;
-                case "B_RT":
+                case "B_RC":
                     BtnPress(btnRT, keyState);
                     break;
 
@@ -348,7 +348,7 @@ namespace AppK2J
         private static string UserConfig(string _e)
         {
             //Naming COnvension in the configuration file
-            //B_ ** = Button;  ** = A/B/X/Y/RB/LB/ST(start)/BK(back)/RT(right stick click)/LT(left stick click)
+            //B_ ** = Button;  ** = A/B/X/Y/RB/LB/ST(start)/BK(back)/RC(right stick click)/LC(left stick click)
             //S_ ** = Stick Up/Down/Left/Right; ** = LU(stands for Letf stick up and so on)/LL/LD/LR/RU/RL/RD/RR
             //T_** = Trigger; ** = RT/LT 
             //D_** = D-pad_Switch Up/Down/Left/Right; **=U/L/D/R
@@ -531,7 +531,7 @@ namespace AppK2J
                     case "Y": return keyConfiguration[172, isGameMode];
                     case "Z": return keyConfiguration[173, isGameMode];
                     case "ZOOM": return keyConfiguration[174, isGameMode];
-                    default: return "--";
+                    default: return _e;
                 }
             }
             //Idle mode
