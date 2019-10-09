@@ -1,9 +1,17 @@
 # K2J
 This software allow user to use single or multiple keyboards as independent virtual Xbox controller(s).
+
+
 Many other keyboard to virtual controller application are there on the web. But when you set multiple virtual controllers using those, key press in any keyboard will invoke all virtual controllers because by default windows treat all keyboard as one.
-That's why this application is created. RawInput API allows this program to differentiate between multiple keyboard. So, you can set "W" key of one keyboard for Left Thumbstick Up of one controller and same button of another keyboard for Left Shoulder button of another one and so on. Now you can use virtual controllers for PvP couch party.
-Instructions on how to use this is provided in the release.
-https://github.com/Shadow035/K2J/releases/
+
+
+That's why this application is created. RawInput API allows this program to differentiate between multiple keyboard. So, you can set "W" key of one keyboard for Left Thumbstick Up of one controller and same key of another keyboard for Left Shoulder button of another controller and so on. 
+
+
+So you can now use two keyboards for PvP couch party using two virtual controller without interfering controls of each other in game like FIFA or whatever you like.
+
+
+Instructions on how to use this is provided in the release.https://github.com/Shadow035/K2J/releases/
 
 **::Credits::**
 
