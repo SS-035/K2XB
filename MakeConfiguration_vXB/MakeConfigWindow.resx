@@ -117,4 +117,33 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="textBoxResponse.Text" xml:space="preserve">
+    <value>Mode 1
+Mode 2
+
+A
+B
+X
+Y
+RB
+LB
+Start
+Back
+Right Thumbstick Click
+Left Thumbstick Click
+Right Trigger
+Left Trigger
+D-pad Up
+D-pad Down
+D-pad Left
+D-pad Right
+Left Thumbstick Up
+Left Thumbstick Down
+Left Thumbstick Left
+Left Thumbstick Right
+Right Thumbstick Up
+Right Thumbstick Down
+Right Thumbstick Left
+Right Thumbstick Right</value>
+  </data>
 </root>

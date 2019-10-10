@@ -351,7 +351,7 @@ namespace AppK2J
             //B_ ** = Button;  ** = A/B/X/Y/RB/LB/ST(start)/BK(back)/RC(right stick click)/LC(left stick click)
             //S_ ** = Stick Up/Down/Left/Right; ** = LU(stands for Letf stick up and so on)/LL/LD/LR/RU/RL/RD/RR
             //T_** = Trigger; ** = RT/LT 
-            //D_** = D-pad_Switch Up/Down/Left/Right; **=U/L/D/R
+            //D_** = D-pad_Switch; **=U/L/D/R
 
             if (isGameMode != 2)
             {
@@ -756,8 +756,8 @@ namespace AppK2J
 
             // Log this error. Logging the exception doesn't correct the problem but at least now
             // you may have more insight as to why the exception is being thrown.
-            Debug.WriteLine("Unhandled Exception: " + ex.Message);
-            Debug.WriteLine("Unhandled Exception: " + ex);
+            Debug.WriteLine("Unhandled Exception (K2JMain):" + ex.Message);
+            Debug.WriteLine("Unhandled Exception (K2JMain): " + ex);
             MessageBox.Show(ex.Message);
         }
         #endregion
