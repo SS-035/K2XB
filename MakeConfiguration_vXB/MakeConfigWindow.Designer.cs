@@ -63,6 +63,7 @@
             this.labelMessage = new System.Windows.Forms.Label();
             this.textBoxResponse = new System.Windows.Forms.TextBox();
             this.buttonName = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // buttonSave
@@ -87,9 +88,9 @@
             // 
             // MODE1
             // 
-            this.MODE1.Location = new System.Drawing.Point(8, 51);
+            this.MODE1.Location = new System.Drawing.Point(192, 8);
             this.MODE1.Name = "MODE1";
-            this.MODE1.Size = new System.Drawing.Size(178, 23);
+            this.MODE1.Size = new System.Drawing.Size(89, 23);
             this.MODE1.TabIndex = 32;
             this.MODE1.Text = "Mode 1";
             this.MODE1.UseVisualStyleBackColor = true;
@@ -97,9 +98,9 @@
             // 
             // MODE2
             // 
-            this.MODE2.Location = new System.Drawing.Point(192, 51);
+            this.MODE2.Location = new System.Drawing.Point(281, 8);
             this.MODE2.Name = "MODE2";
-            this.MODE2.Size = new System.Drawing.Size(178, 23);
+            this.MODE2.Size = new System.Drawing.Size(89, 23);
             this.MODE2.TabIndex = 34;
             this.MODE2.Text = "Mode 2";
             this.MODE2.UseVisualStyleBackColor = true;
@@ -324,19 +325,19 @@
             // label27
             // 
             this.label27.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label27.Location = new System.Drawing.Point(8, 9);
+            this.label27.Location = new System.Drawing.Point(8, 52);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(178, 23);
             this.label27.TabIndex = 84;
-            this.label27.Text = "Select Mode";
+            this.label27.Text = "Select Mode for Following Settings";
             this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // buttonMode1
             // 
             this.buttonMode1.BackColor = System.Drawing.Color.Lime;
-            this.buttonMode1.Location = new System.Drawing.Point(192, 9);
+            this.buttonMode1.Location = new System.Drawing.Point(192, 52);
             this.buttonMode1.Name = "buttonMode1";
-            this.buttonMode1.Size = new System.Drawing.Size(83, 23);
+            this.buttonMode1.Size = new System.Drawing.Size(89, 23);
             this.buttonMode1.TabIndex = 85;
             this.buttonMode1.Text = "1";
             this.buttonMode1.UseVisualStyleBackColor = false;
@@ -344,9 +345,9 @@
             // 
             // buttonMode2
             // 
-            this.buttonMode2.Location = new System.Drawing.Point(287, 8);
+            this.buttonMode2.Location = new System.Drawing.Point(281, 52);
             this.buttonMode2.Name = "buttonMode2";
-            this.buttonMode2.Size = new System.Drawing.Size(83, 23);
+            this.buttonMode2.Size = new System.Drawing.Size(89, 23);
             this.buttonMode2.TabIndex = 86;
             this.buttonMode2.Text = "2";
             this.buttonMode2.UseVisualStyleBackColor = true;
@@ -382,11 +383,22 @@
             this.buttonName.UseVisualStyleBackColor = true;
             this.buttonName.Click += new System.EventHandler(this.buttonName_Click);
             // 
+            // label1
+            // 
+            this.label1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.label1.Location = new System.Drawing.Point(8, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(178, 23);
+            this.label1.TabIndex = 91;
+            this.label1.Text = "Set Shortcut Key for Modes";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // MakeConfigurationWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(626, 454);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonName);
             this.Controls.Add(this.textBoxResponse);
             this.Controls.Add(this.labelMessage);
@@ -464,6 +476,7 @@
         private System.Windows.Forms.Label labelMessage;
         private System.Windows.Forms.TextBox textBoxResponse;
         private System.Windows.Forms.Button buttonName;
+        private System.Windows.Forms.Label label1;
     }
 }
 

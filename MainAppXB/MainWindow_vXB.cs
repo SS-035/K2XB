@@ -182,8 +182,8 @@ namespace AppK2J
                         #endregion
 
                         //Changed to GameMode button
-                        Btn1.Text = "Mode 1 <" + keyConfiguration[0, 0] + ">";
-                        Btn2.Text = "Mode 2 <" + keyConfiguration[0, 1] + ">";
+                        Btn1.Text = "Mode 1 <" + ((keyConfiguration[0, 0] == "MODE1") ? "Not Set" : keyConfiguration[0, 0]) + ">";
+                        Btn2.Text = "Mode 2 <" + ((keyConfiguration[0, 1] == "MODE2") ? "Not Set" : keyConfiguration[0, 1]) + ">";
 
                         //set nRun = 2 and send to next step
                         nRun = 2;
