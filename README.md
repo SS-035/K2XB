@@ -19,6 +19,13 @@ More detailed instructions on how to use this is provided in the release.https:/
 
 Found a bug? Feel free to report it at https://github.com/Shadow035/K2XB/issues
 
+
+Target .NET Framework: 4.0
+
+
+Used IDE : Visual Studio 17 (Community edition)
+
+
 **::Credits::**
 
 ScpVbus (by Scarlet.Crush, maintained by Benjamin Höglinger)
@@ -30,4 +37,3 @@ https://github.com/shauleiz/vXboxInterface/
 RawInput.dll (by Emma Burrows)
 https://www.codeproject.com/articles/17123/using-raw-input-from-c-to-handle-multiple-keyboard
 
-Used IDE : Visual Studio 17 
