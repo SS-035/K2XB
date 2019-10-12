@@ -21,16 +21,13 @@ Found a bug? Feel free to report it at https://github.com/Shadow035/K2XB/issues
 
 **::Credits::**
 
-ScpVbus was developed by Scarlet.Crush and was maintained by Benjamin Höglinger.
+ScpVbus (by Scarlet.Crush, maintained by Benjamin Höglinger)
 https://github.com/nefarius/ScpVBus
 
-vXboxInterface.dll is developed by Shaul Eizikovich
+vXboxInterface.dll (by Shaul Eizikovich)
 https://github.com/shauleiz/vXboxInterface/
 
-RawInput.dll is developed by Emma Burrows
+RawInput.dll (by Emma Burrows)
 https://www.codeproject.com/articles/17123/using-raw-input-from-c-to-handle-multiple-keyboard
-
-Rest is by me - SS.
-https://github.com/Shadow035/K2XB
 
 Used IDE : Visual Studio 17 
