@@ -61,8 +61,8 @@
             this.buttonMode1 = new System.Windows.Forms.Button();
             this.buttonMode2 = new System.Windows.Forms.Button();
             this.labelMessage = new System.Windows.Forms.Label();
-            this.textBoxConfigurationName = new System.Windows.Forms.TextBox();
             this.textBoxResponse = new System.Windows.Forms.TextBox();
+            this.buttonName = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonSave
@@ -361,16 +361,6 @@
             this.labelMessage.Text = "Hello";
             this.labelMessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // textBoxConfigurationName
-            // 
-            this.textBoxConfigurationName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxConfigurationName.Location = new System.Drawing.Point(391, 9);
-            this.textBoxConfigurationName.Name = "textBoxConfigurationName";
-            this.textBoxConfigurationName.Size = new System.Drawing.Size(227, 22);
-            this.textBoxConfigurationName.TabIndex = 88;
-            this.textBoxConfigurationName.Text = "Put your configuration name here";
-            this.textBoxConfigurationName.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
             // textBoxResponse
             // 
             this.textBoxResponse.BackColor = System.Drawing.SystemColors.ControlLightLight;
@@ -382,13 +372,23 @@
             this.textBoxResponse.TabIndex = 89;
             this.textBoxResponse.Text = resources.GetString("textBoxResponse.Text");
             // 
+            // buttonName
+            // 
+            this.buttonName.Location = new System.Drawing.Point(391, 8);
+            this.buttonName.Name = "buttonName";
+            this.buttonName.Size = new System.Drawing.Size(227, 23);
+            this.buttonName.TabIndex = 90;
+            this.buttonName.Text = "Set Configuration Name";
+            this.buttonName.UseVisualStyleBackColor = true;
+            this.buttonName.Click += new System.EventHandler(this.buttonName_Click);
+            // 
             // MakeConfigurationWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(626, 454);
+            this.Controls.Add(this.buttonName);
             this.Controls.Add(this.textBoxResponse);
-            this.Controls.Add(this.textBoxConfigurationName);
             this.Controls.Add(this.labelMessage);
             this.Controls.Add(this.buttonMode2);
             this.Controls.Add(this.buttonMode1);
@@ -462,8 +462,8 @@
         private System.Windows.Forms.Button buttonMode1;
         private System.Windows.Forms.Button buttonMode2;
         private System.Windows.Forms.Label labelMessage;
-        private System.Windows.Forms.TextBox textBoxConfigurationName;
         private System.Windows.Forms.TextBox textBoxResponse;
+        private System.Windows.Forms.Button buttonName;
     }
 }
 

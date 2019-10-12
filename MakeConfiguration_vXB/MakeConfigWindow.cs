@@ -15,7 +15,9 @@ namespace MakeConfiguration_vXB
         private const int numberofKeys = 1 + 174;
         private static int isGameMode = 0;
         private static bool isRecording = false;
+        private static bool isNaming = false;
         private static string controllerKeyToSet = "";
+        private static string fileName = "";
 
         private static readonly string[] keyArray = { "GAMEMODE", "A", "ADD", "ALT", "APPS", "ATTN", "B", "BACK", "BROWSERBACK", "BROWSERFAVORITES", "BROWSERFORWARD", "BROWSERHOME", "BROWSERREFRESH", "BROWSERSEARCH", "BROWSERSTOP", "C", "CANCEL", "CAPITAL", "CLEAR",
             "CONTROL", "CONTROLKEY", "CRSEL", "D", "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "DECIMAL", "DELETE", "DIVIDE", "DOWN", "E", "END", "ENTER", "ERASEEOF", "ESCAPE", "EXECUTE", "EXSEL", "F", "F1", "F10", "F11", "F12", "F13", "F14", "F15",
@@ -35,8 +37,6 @@ namespace MakeConfiguration_vXB
         public MakeConfigurationWindow()
         {
             InitializeComponent();
-
-            this.textBoxConfigurationName.TextChanged += textBoxConfiguration_TextChanged;
 
             Button[] arrayButton = { B_A, B_B, B_X, B_Y, B_LB, B_RB, B_ST, B_BK, B_RC, B_LC, T_LT, T_RT, D_U, D_D, D_L, D_R, S_LU, S_LD, S_LL, S_LR, S_RU, S_RD, S_RL, S_RR };
 
@@ -60,38 +60,52 @@ namespace MakeConfiguration_vXB
 
         private void OnKeyPressed(object sender, RawInputEventArg e)
         {
-            if (e.KeyPressEvent.KeyPressState != "MAKE")
-            {
-                if (isRecording)
-                {
-                    labelMessage.Text = "";
-                    isRecording = false;
-                    string recordedVertualKey = e.KeyPressEvent.VKeyName;
-                    int keyPosition = SearchKeyPosition(recordedVertualKey);
+            string recordedVertualKey = e.KeyPressEvent.VKeyName;
 
-                    if (controllerKeyToSet == "keyDelete")
+            if ((isNaming) && (e.KeyPressEvent.KeyPressState == "MAKE"))
+            {
+                if (SetFileName(recordedVertualKey))
+                {
+                    if (fileName != "")
+                        buttonName.Text = fileName;
+                    else
+                        buttonName.Text = "Set Configuration Name";
+                    buttonName.BackColor = Control.DefaultBackColor;
+                    labelMessage.Text = "";
+                    isNaming = false;
+                }
+                else
+                    buttonName.Text = fileName + "_";
+            }
+            else if ((isRecording) && (e.KeyPressEvent.KeyPressState != "MAKE"))
+            {
+                isRecording = false;
+                labelMessage.Text = "";
+                int keyPosition = SearchKeyPosition(recordedVertualKey);
+
+                if (controllerKeyToSet == "keyDelete")
+                {
+                    ClearKey(keyPosition, recordedVertualKey);
+                    UpdateState();
+                }
+                else if (((recordedVertualKey == controllerKeys[0, 0]) || (recordedVertualKey == controllerKeys[0, 1])) || (controllerKeys[keyPosition, isGameMode] != null))
+                {
+                    if (WarningResponse("You already assigned this key to elsewhere. Do you want to keep the new setting?", "Duplicate Key"))
                     {
                         ClearKey(keyPosition, recordedVertualKey);
-                        UpdateState();
-                    }
-                    else if (((recordedVertualKey == controllerKeys[0, 0]) || (recordedVertualKey == controllerKeys[0, 1])) || (controllerKeys[keyPosition, isGameMode] != null))
-                    {
-                        if (warningResponse())
-                        {
-                            ClearKey(keyPosition, recordedVertualKey);
-                            AssignKey(keyPosition, recordedVertualKey);
-                        }
-                    }
-                    else
                         AssignKey(keyPosition, recordedVertualKey);
+                    }
                 }
+                else
+                    AssignKey(keyPosition, recordedVertualKey);
             }
+
 
         }
 
-        private bool warningResponse()
+        private bool WarningResponse(string caption, string title)
         {
-            DialogResult result = MessageBox.Show("You already assigned this key to elsewhere. Do you want to keep the new setting?", "Duplicate Key", MessageBoxButtons.YesNo);
+            DialogResult result = MessageBox.Show(caption, title, MessageBoxButtons.YesNo);
             if (result == DialogResult.Yes)
                 return true;
             else
@@ -350,6 +364,106 @@ namespace MakeConfiguration_vXB
             }
         }
 
+        private void UpdateState()
+        {
+            System.Text.StringBuilder textToShow = new System.Text.StringBuilder("");
+
+            for (int i = 0; i < 2; i++)
+            {
+                textToShow.Append("Mode ");
+                textToShow.Append(i + 1);
+                if (controllerKeys[0, i] != null)
+                {
+                    textToShow.Append("   <-   ");
+                    textToShow.Append(controllerKeys[0, i]);
+                }
+                textToShow.Append(Environment.NewLine);
+            }
+
+            for (int i = 0; i < 24; i++)
+            {
+                textToShow.Append(Environment.NewLine);
+                textToShow.Append(arrayControllerButtonNames[i]);
+                if (RecordBook[i, isGameMode].Count != 0)
+                {
+                    textToShow.Append("   <-");
+                    foreach (Object obj in RecordBook[i, isGameMode])
+                    {
+                        textToShow.Append("  ");
+                        textToShow.Append(obj.ToString());
+                    }
+                }
+            }
+            textBoxResponse.Text = textToShow.ToString();
+        }
+
+        private bool SetFileName(string key)
+        {
+            if (key == "ENTER")
+                return true;
+            else
+            {
+                switch (key)
+                {
+                    case "A":
+                    case "B":
+                    case "C":
+                    case "D":
+                    case "E":
+                    case "F":
+                    case "G":
+                    case "H":
+                    case "I":
+                    case "J":
+                    case "K":
+                    case "L":
+                    case "M":
+                    case "N":
+                    case "O":
+                    case "P":
+                    case "Q":
+                    case "R":
+                    case "S":
+                    case "T":
+                    case "U":
+                    case "V":
+                    case "W":
+                    case "X":
+                    case "Y":
+                    case "Z":
+                    case "D0":
+                    case "D1":
+                    case "D2":
+                    case "D3":
+                    case "D4":
+                    case "D5":
+                    case "D6":
+                    case "D7":
+                    case "D8":
+                    case "D9":
+                    case "NUMPAD0":
+                    case "NUMPAD1":
+                    case "NUMPAD2":
+                    case "NUMPAD3":
+                    case "NUMPAD4":
+                    case "NUMPAD5":
+                    case "NUMPAD6":
+                    case "NUMPAD7":
+                    case "NUMPAD8":
+                    case "NUMPAD9":
+                        fileName = fileName + key[key.Length - 1];
+                        break;
+                    case "BACK":
+                        if (fileName.Length != 0)
+                            fileName = fileName.Substring(0, fileName.Length - 1);
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        }
+
         private void Keyboard_FormClosing(object sender, FormClosingEventArgs e)
         {
             _rawinput.KeyPressed -= OnKeyPressed;
@@ -384,50 +498,68 @@ namespace MakeConfiguration_vXB
         {
             isRecording = true;
             controllerKeyToSet = "keyDelete";
+            labelMessage.Text = "Press the key to clear...";
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            if (controllerKeys[0, 0] != null)
+            bool writeFile = false;
+            if (fileName.Length != 0)
             {
-                controllerKeys[SearchKeyPosition(controllerKeys[0, 0]), 0] = "MODE1";
-                controllerKeys[SearchKeyPosition(controllerKeys[0, 0]), 1] = "MODE1";
-            }
-            else
-            {
-                controllerKeys[0, 0] = "MODE1";
-            }
-            if (controllerKeys[0, 1] != null)
-            {
-                controllerKeys[SearchKeyPosition(controllerKeys[0, 1]), 0] = "MODE2";
-                controllerKeys[SearchKeyPosition(controllerKeys[0, 1]), 1] = "MODE2";
-            }
-            else
-            {
-                controllerKeys[0, 1] = "MODE2";
-            }
-
-
-            using (StreamWriter outputFile = new StreamWriter("Config"))
-            {
-
-                for (int i = 0; i < numberofKeys; i++)
+                if (File.Exists(fileName))
                 {
-                    string line = keyArray[i];
-                    for (int j = 0; j < 2; j++)
-                    {
-                        if (controllerKeys[i, j] == null)
-                            line = line + " --";
-                        else line = line + " " + controllerKeys[i, j];
-                    }
+                    if (WarningResponse("Configuration file with same name exists. Do you want to replace it?", "Duplicate Name"))
+                        writeFile = true;
+                }
+                else
+                    writeFile = true;
+            }
 
-                    outputFile.WriteLine(line);
+            if (writeFile)
+            {
+                if (controllerKeys[0, 0] != null)
+                {
+                    controllerKeys[SearchKeyPosition(controllerKeys[0, 0]), 0] = "MODE1";
+                    controllerKeys[SearchKeyPosition(controllerKeys[0, 0]), 1] = "MODE1";
+                }
+                else
+                {
+                    controllerKeys[0, 0] = "MODE1";
+                }
+                if (controllerKeys[0, 1] != null)
+                {
+                    controllerKeys[SearchKeyPosition(controllerKeys[0, 1]), 0] = "MODE2";
+                    controllerKeys[SearchKeyPosition(controllerKeys[0, 1]), 1] = "MODE2";
+                }
+                else
+                {
+                    controllerKeys[0, 1] = "MODE2";
                 }
 
-            }
 
-            labelMessage.Text = "Close the application...";
-            Application.Exit();
+                using (StreamWriter outputFile = new StreamWriter(fileName))
+                {
+
+                    for (int i = 0; i < numberofKeys; i++)
+                    {
+                        string line = keyArray[i];
+                        for (int j = 0; j < 2; j++)
+                        {
+                            if (controllerKeys[i, j] == null)
+                                line = line + " --";
+                            else line = line + " " + controllerKeys[i, j];
+                        }
+
+                        outputFile.WriteLine(line);
+                    }
+                }
+                labelMessage.Text = "Close the application...";
+                Application.Exit();
+            }
+            else
+            {
+                buttonName.BackColor = System.Drawing.Color.Red;
+            }
         }
 
         private void MODE1_Click(object sender, EventArgs e)
@@ -451,39 +583,14 @@ namespace MakeConfiguration_vXB
             labelMessage.Text = "Recording... Press your desired key.";
         }
 
-        private void UpdateState()
+        private void buttonName_Click(object sender, EventArgs e)
         {
-            textBoxResponse.Text = "";
-
-            for (int i = 0; i < 2; i++)
-            {
-                textBoxResponse.AppendText("Mode " + (i + 1));
-                if (controllerKeys[0, i] != null)
-                {
-                    textBoxResponse.AppendText("   <-   " + controllerKeys[0, i]);
-                }
-                textBoxResponse.AppendText(Environment.NewLine);
-            }
-
-            for (int i = 0; i < 24; i++)
-            {
-                textBoxResponse.AppendText(Environment.NewLine);
-                textBoxResponse.AppendText(arrayControllerButtonNames[i]);
-                if (RecordBook[i,isGameMode].Count != 0)
-                {
-                    textBoxResponse.AppendText("   <-");
-                    foreach (Object obj in RecordBook[i, isGameMode])
-                        textBoxResponse.AppendText("  "+ obj.ToString());
-                }
-            }
+            isNaming = true;
+            labelMessage.Text = "Type this configuration name. Only 0-9 and A-Z allowed.";
+            buttonName.BackColor = System.Drawing.Color.White;
+            buttonName.Text = fileName + "_";
         }
+               
 
-        private void textBoxConfiguration_TextChanged(object sender, EventArgs e)
-        {
-            var textboxSender = (TextBox)sender;
-            var cursorPosition = textboxSender.SelectionStart;
-            textboxSender.Text = System.Text.RegularExpressions.Regex.Replace(textboxSender.Text, "[^0-9a-zA-Z]", "");
-            textboxSender.SelectionStart = cursorPosition;
-        }
     }
 }

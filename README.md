@@ -1,4 +1,4 @@
-# K2J
+# K2XB
 This software allow user to use single or multiple keyboards as independent virtual Xbox 360 controller(s).
 
 
@@ -14,10 +14,10 @@ Please note that, keyboard will still send input to Windows while virtual Xbox c
 So in order to use two (or more) keyboards for PvP couch party in game like FIFA or whatever you like, you need to set two (or more) virtual controller each connected to different keyboard. 
 
 
-More detailed instructions on how to use this is provided in the release.https://github.com/Shadow035/K2J/releases/
+More detailed instructions on how to use this is provided in the release.https://github.com/Shadow035/K2XB/releases/
 
 
-Found a bug? Feel free to report it at https://github.com/Shadow035/K2J/issues
+Found a bug? Feel free to report it at https://github.com/Shadow035/K2XB/issues
 
 **::Credits::**
 
@@ -31,6 +31,6 @@ RawInput.dll is developed by Emma Burrows
 https://www.codeproject.com/articles/17123/using-raw-input-from-c-to-handle-multiple-keyboard
 
 Rest is by me - SS.
-https://github.com/Shadow035/K2J
+https://github.com/Shadow035/K2XB
 
 Used IDE : Visual Studio 17 

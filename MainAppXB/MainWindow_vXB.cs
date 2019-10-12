@@ -94,7 +94,6 @@ namespace AppK2J
             for (vxbID = 1; vxbID <= 4; vxbID++)
             {
                 findID = isControllerExists(vxbID);
-                //LogW("Device vxbID : " + vxbID + "  ( " + findID + " )\n");
                 if (findID == false)
                     break;
             }
@@ -107,10 +106,10 @@ namespace AppK2J
             else
             {
                 //GetLedNumber(vxbID, out Led);
-                LogW("Acquired :: vXbox vxbID : " + vxbID.ToString() + "\n");
+                LogW("Acquired :: vXbox ID : " + vxbID.ToString() + "\n");
             }
 
-            this.Text = " :: K2J :: vxbID " + vxbID.ToString() + " :: Blank";
+            this.Text = " :: K2XB :: ID " + vxbID.ToString() + " :: Blank";
 
             if (forceSD == true)
             {
@@ -175,7 +174,7 @@ namespace AppK2J
                             {
                                 LogNExit("Error in Configuration file \n");
                             }
-                            this.Text = " :: K2J :: vxbID " + vxbID.ToString() + " :: "+ Path.GetFileNameWithoutExtension(ofd.FileName);
+                            this.Text = " :: K2XB :: ID " + vxbID.ToString() + " :: "+ Path.GetFileNameWithoutExtension(ofd.FileName);
                         }
                         else
                             LogNExit("No file selected.. \n");
@@ -756,8 +755,8 @@ namespace AppK2J
 
             // Log this error. Logging the exception doesn't correct the problem but at least now
             // you may have more insight as to why the exception is being thrown.
-            Debug.WriteLine("Unhandled Exception (K2JMain):" + ex.Message);
-            Debug.WriteLine("Unhandled Exception (K2JMain): " + ex);
+            Debug.WriteLine("Unhandled Exception (K2XBMain):" + ex.Message);
+            Debug.WriteLine("Unhandled Exception (K2XBMain): " + ex);
             MessageBox.Show(ex.Message);
         }
         #endregion
